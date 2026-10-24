@@ -17,8 +17,7 @@ jobs:
       - name: Namestitev Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
 
       - name: Namestitev Java JDK 17
         uses: actions/setup-java@v4
@@ -30,14 +29,14 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Namestitev odvisnosti
-        run: npm ci || npm install
+        run: npm install --legacy-peer-deps
 
       - name: Izgradnja spletne aplikacije
         run: npm run build
 
       - name: Namestitev Capacitor Android orodij
         run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
           npx cap init "Internetni Radio" "si.radio.internetni" --web-dir=dist
           npx cap add android
           npx cap sync android
