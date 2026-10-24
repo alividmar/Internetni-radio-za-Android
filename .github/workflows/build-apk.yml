@@ -14,19 +14,16 @@ jobs:
       - name: Prenos izvorne kode
         uses: actions/checkout@v4
 
-      - name: Namestitev Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
       - name: Namestitev Java JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Namestitev Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Namestitev Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Namestitev odvisnosti
         run: npm install --legacy-peer-deps
@@ -45,7 +42,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Shranitev APK datoteke za prenos
         uses: actions/upload-artifact@v4
