@@ -31,12 +31,19 @@ jobs:
       - name: Izgradnja spletne aplikacije
         run: npm run build
 
-      - name: Namestitev Capacitor Android orodij
+      - name: Priprava Capacitor in Android okolja
         run: |
           npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
-          npx cap init "Internetni Radio" "si.radio.internetni" --web-dir=dist
-          npx cap add android
+          if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
+            npx cap init "Internetni Radio" "si.radio.internetni" --web-dir=dist
+          fi
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
           npx cap sync android
+
+      - name: Sprejem Android licenc
+        run: yes | sdkmanager --licenses || true
 
       - name: Izgradnja Android Debug APK
         run: |
