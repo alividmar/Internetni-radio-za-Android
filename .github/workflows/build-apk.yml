@@ -17,39 +17,36 @@ jobs:
       - name: Namestitev Java JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
-      - name: Namestitev Node.js
+      - name: Namestitev Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Namestitev odvisnosti
+      - name: Namestitev paketov
         run: npm install --legacy-peer-deps
 
       - name: Izgradnja spletne aplikacije
         run: npm run build
 
-      - name: Priprava Capacitor in Android okolja
+      - name: Namestitev Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
+
+      - name: Konfiguracija Android projekta
+        env:
+          CI: true
         run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
-          if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
-            npx cap init "Internetni Radio" "si.radio.internetni" --web-dir=dist
-          fi
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
+          npx cap init "Internetni Radio" "si.radio.internetni" --web-dir=dist || true
+          npx cap add android || true
           npx cap sync android
 
-      - name: Sprejem Android licenc
-        run: yes | sdkmanager --licenses || true
-
-      - name: Izgradnja Android Debug APK
+      - name: Izgradnja Android APK paketa
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Shranitev APK datoteke za prenos
         uses: actions/upload-artifact@v4
